@@ -1,5 +1,5 @@
 #include <iostream>
 using namespace std;
 int main(){
-	std::cout << "sonny biji";
+	std::cout << "nathan biji onta";
 }
