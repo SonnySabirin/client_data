@@ -1,52 +1,46 @@
 #include <iostream>
 
-// Version 1.0
+// Version 1.1
 
-struct PersonalInfo{
-	std::string nama_lengkap;
-	std::string tanggal_lahir;
-	std::string tempat_lahir;
-	std::string email;
-	std::string no_telepon;
-	std::string jenis_kelamin;
-	std::string alamat;
-};
+typedef struct{
+	std::string nama_lengkap,tanggal_lahir,tempat_lahir,email,no_telepon,jenis_kelamin,alamat;
+}PersonalInfo;
 
-struct AccountInfo{
-	std::string no_rekening;
-	std::string no_kartu_atm;
-	std::string jenis_akun;
-	std::string nama_ibu;
-	std::string profesi;
-};
+typedef struct{
+	std::string no_rekening,no_kartu_atm,jenis_akun,nama_ibu,profesi;
+}AccountInfo;
 
-struct Nasabah{
+typedef struct{
 	PersonalInfo infopersonal;
 	AccountInfo infoakun;
-	Nasabah* next;
-};
+}Nasabah;
 
-Nasabah* top = NULL;
+typedef struct Node{
+    Nasabah data;
+    Node* next; 
+}Node;
 
-Nasabah* push(Nasabah* top,PersonalInfo infopersonal, AccountInfo infoakun){
-	Nasabah* newnode = new Nasabah;
-	newnode -> infopersonal.nama_lengkap = infopersonal.nama_lengkap;
-	newnode -> infopersonal.tanggal_lahir = infopersonal.tanggal_lahir;
-	newnode -> infopersonal.tempat_lahir = infopersonal.tempat_lahir;
-	newnode -> infopersonal.email = infopersonal.email;
-	newnode -> infopersonal.no_telepon = infopersonal.no_telepon;
-	newnode -> infopersonal.jenis_kelamin = infopersonal.jenis_kelamin;
-	newnode -> infopersonal.alamat = infopersonal.alamat;
-	newnode -> infoakun.no_rekening = infoakun.no_rekening;
-	newnode -> infoakun.no_kartu_atm = infoakun.no_kartu_atm;
-	newnode -> infoakun.jenis_akun = infoakun.jenis_akun;
-	newnode -> infoakun.nama_ibu = infoakun.nama_ibu;
-	newnode -> infoakun.profesi = infoakun.profesi;
+Node* top = NULL;
+
+Node* push(Node* top,PersonalInfo infopersonal, AccountInfo infoakun){
+	Node* newnode = new Node;
+	newnode -> data.infopersonal.nama_lengkap = infopersonal.nama_lengkap;
+	newnode -> data.infopersonal.tanggal_lahir = infopersonal.tanggal_lahir;
+	newnode -> data.infopersonal.tempat_lahir = infopersonal.tempat_lahir;
+	newnode -> data.infopersonal.email = infopersonal.email;
+	newnode -> data.infopersonal.no_telepon = infopersonal.no_telepon;
+	newnode -> data.infopersonal.jenis_kelamin = infopersonal.jenis_kelamin;
+	newnode -> data.infopersonal.alamat = infopersonal.alamat;
+	newnode -> data.infoakun.no_rekening = infoakun.no_rekening;
+	newnode -> data.infoakun.no_kartu_atm = infoakun.no_kartu_atm;
+	newnode -> data.infoakun.jenis_akun = infoakun.jenis_akun;
+	newnode -> data.infoakun.nama_ibu = infoakun.nama_ibu;
+	newnode -> data.infoakun.profesi = infoakun.profesi;
 	newnode -> next = top;
 	return newnode;
 }
 
-Nasabah* input_nasabah(Nasabah* top){
+Node* input_nasabah(Node* top){
 	PersonalInfo infopersonal;
 	AccountInfo infoakun;
 	std::cin.ignore();
@@ -79,14 +73,14 @@ Nasabah* input_nasabah(Nasabah* top){
 }
 
 // test display node
-void display(Nasabah* top){
-	Nasabah* temp = top;
+void display(Node* top){
+	Node* temp = top;
 	while(temp != NULL){
-		std::cout << temp -> infopersonal.nama_lengkap << "\n";
-		std::cout << temp -> infopersonal.alamat << "\n";
+		std::cout << temp -> data.infopersonal.nama_lengkap << "\n";
+		std::cout << temp -> data.infopersonal.alamat << "\n";
 
-		std::cout << temp -> infoakun.no_rekening << "\n";
-		std::cout << temp -> infoakun.profesi << "\n";
+		std::cout << temp -> data.infoakun.no_rekening << "\n";
+		std::cout << temp -> data.infoakun.profesi << "\n";
 
 		temp = temp -> next;
 	}
