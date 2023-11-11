@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-// Version 1.2
+// Version 1.4
 
 typedef struct{
 	std::string nama_lengkap,tanggal_lahir,tempat_lahir,email,no_telepon,jenis_kelamin,alamat;
@@ -89,6 +89,7 @@ Node* load_file(std::string nama_file){
 	return top;
 }
 
+
 // test display node
 void display(Node* top){
 	Node* temp = top;
@@ -102,12 +103,55 @@ void display(Node* top){
 		temp = temp -> next;
 	}
 }
+
+// Linear Search
+void search(std::string nama){
+	Node* temp = top;
+	Node* found = NULL;
+	while(temp != NULL){
+		if(temp -> data.infopersonal.nama_lengkap.find(nama) != std::string::npos){
+			Node* node_found = new Node;
+			node_found -> data = temp -> data;
+			node_found -> next = found;
+			found = node_found;
+		}
+		temp = temp -> next;
+	}
+	display(found);
+}
+
 void header(){
 	std::cout << "=========================" << "\n";
 	std::cout << "===    BANK LABIRIN   ===" << "\n";
 	std::cout << "=========================" << "\n";
 }
 
+void menu_load(){
+	char opsi;
+	std::string nama;
+	std::cout << "1. Display data nasabah" << "\n";
+	std::cout << "2. Search nama nasabah" << "\n";
+	std::cout << "3. Sort berdasarkan jenis tabungan" << "\n";
+	std::cout << "4. Exit" << "\n";
+	std::cout << "Pilih Opsi: ";
+	std::cin >> opsi;
+	switch(opsi){
+		case '1': 
+			display(top);
+			break;
+		case '2':
+			std::cout << "Nama nasabah yang ingin disearch: ";
+			std::cin >> nama;
+			search(nama);
+			break;
+		case '3':
+			std::cout << "Not available";
+			break;
+		case '4':
+			std::cout << "Exit" << "\n";
+			break;
+	}
+}
 void menu_utama(){
 	char opsi,opsi_lanjut;
 	std::string nama_file;
@@ -124,7 +168,7 @@ void menu_utama(){
 			top = load_file(nama_file);
 			system("clear");
 			std::cout << "Load success" << "\n";
-			display(top);
+			menu_load();
 			break;
 		case '2':
 			top = input_nasabah(top);
@@ -142,7 +186,6 @@ void menu_utama(){
 			std::cout << "Exit" << "\n";
 			break;
 	}
-
 }
 int main(){
 	menu_utama();
