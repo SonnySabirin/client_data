@@ -1,14 +1,14 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-// Version 1.4
+// Version 1.5
 
 typedef struct{
 	std::string nama_lengkap,tanggal_lahir,tempat_lahir,email,no_telepon,jenis_kelamin,alamat;
 }PersonalInfo;
 
 typedef struct{
-	std::string no_rekening,no_kartu_atm,jenis_akun,nama_ibu,profesi;
+	std::string no_rekening,no_kartu_atm,jenis_akun,id_jenis_akun,nama_ibu,profesi;
 }AccountInfo;
 
 typedef struct{
@@ -35,6 +35,16 @@ Node* push(Node* top,PersonalInfo infopersonal, AccountInfo infoakun){
 	newnode -> data.infoakun.no_rekening = infoakun.no_rekening;
 	newnode -> data.infoakun.no_kartu_atm = infoakun.no_kartu_atm;
 	newnode -> data.infoakun.jenis_akun = infoakun.jenis_akun;
+	if(infoakun.jenis_akun == "Tabungan"){
+		infoakun.id_jenis_akun = 1;
+	}
+	else if(infoakun.jenis_akun == "Giro"){
+		infoakun.id_jenis_akun = 2;
+	}
+	else if(infoakun.jenis_akun == "Investasi"){
+		infoakun.id_jenis_akun = 3;
+	}
+	newnode -> data.infoakun.id_jenis_akun = infoakun.id_jenis_akun;
 	newnode -> data.infoakun.nama_ibu = infoakun.nama_ibu;
 	newnode -> data.infoakun.profesi = infoakun.profesi;
 	newnode -> next = top;
@@ -97,7 +107,7 @@ void display(Node* top){
 		std::cout << temp -> data.infopersonal.nama_lengkap << "\n";
 		std::cout << temp -> data.infopersonal.alamat << "\n";
 
-		std::cout << temp -> data.infoakun.no_rekening << "\n";
+		std::cout << temp -> data.infoakun.jenis_akun << "\n";
 		std::cout << temp -> data.infoakun.profesi << "\n";
 
 		temp = temp -> next;
@@ -120,6 +130,63 @@ void search(std::string nama){
 	display(found);
 }
 
+
+Node* merge(Node* left, Node* right) {
+    if (!left){
+		return right;
+	}
+    if (!right){
+		return left;
+	}
+
+    Node* result = NULL;
+
+    if (left->data.infoakun.id_jenis_akun <= right->data.infoakun.id_jenis_akun) {
+        result = left;
+        result->next = merge(left->next, right);
+    } else {
+        result = right;
+        result->next = merge(left, right->next);
+    }
+
+    return result;
+}
+
+Node* split(Node* head) {
+    if (!head || !head->next) {
+        return head;
+    }
+
+    Node* slow = head;
+    Node* fast = head->next;
+
+    while (fast) {
+        fast = fast->next;
+        if (fast) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+
+    Node* right = slow->next;
+    slow->next = NULL;
+
+    return right;
+}
+
+Node* mergesort(Node* head) {
+    if (!head || !head->next) {
+        return head;
+    }
+
+    Node* right = split(head);
+
+    head = mergesort(head);
+    right = mergesort(right);
+
+    return merge(head, right);
+}
+
 void header(){
 	std::cout << "=========================" << "\n";
 	std::cout << "===    BANK LABIRIN   ===" << "\n";
@@ -129,6 +196,7 @@ void header(){
 void menu_load(){
 	char opsi;
 	std::string nama;
+	header();
 	std::cout << "1. Display data nasabah" << "\n";
 	std::cout << "2. Search nama nasabah" << "\n";
 	std::cout << "3. Sort berdasarkan jenis tabungan" << "\n";
@@ -145,7 +213,8 @@ void menu_load(){
 			search(nama);
 			break;
 		case '3':
-			std::cout << "Not available";
+			top = mergesort(top);
+			display(top);
 			break;
 		case '4':
 			std::cout << "Exit" << "\n";
