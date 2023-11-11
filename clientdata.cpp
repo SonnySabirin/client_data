@@ -1,6 +1,7 @@
 #include <iostream>
-
-// Version 1.1
+#include <fstream>
+#include <sstream>
+// Version 1.2
 
 typedef struct{
 	std::string nama_lengkap,tanggal_lahir,tempat_lahir,email,no_telepon,jenis_kelamin,alamat;
@@ -72,6 +73,22 @@ Node* input_nasabah(Node* top){
 	return top;
 }
 
+Node* load_file(std::string nama_file){
+	PersonalInfo infopersonal;
+	AccountInfo infoakun;
+	std::string line;
+	std::ifstream datanasabah (nama_file);
+	while(getline(datanasabah,line)){
+		if(line.empty()){
+			continue;
+		}
+		std::stringstream data(line);
+		data >> infopersonal.nama_lengkap >> infopersonal.tanggal_lahir >> infopersonal.tempat_lahir >> infopersonal.email >> infopersonal.no_telepon >> infopersonal.jenis_kelamin >> infopersonal.alamat >> infoakun.no_rekening >> infoakun.no_kartu_atm >> infoakun.jenis_akun >> infoakun.nama_ibu >> infoakun.profesi;
+		top = push(top,infopersonal,infoakun);
+	}
+	return top;
+}
+
 // test display node
 void display(Node* top){
 	Node* temp = top;
@@ -93,26 +110,40 @@ void header(){
 
 void menu_utama(){
 	char opsi,opsi_lanjut;
+	std::string nama_file;
 	header();
 	std::cout << "1. Load Data Nasabah" << "\n";
 	std::cout << "2. Input data nasabah baru" << "\n";
 	std::cout << "3. Keluar" << "\n";
 	std::cout << "Pilih opsi: ";
 	std::cin >> opsi;
-
-	if(opsi == '2'){
-		top = input_nasabah(top);
-		std::cout << "Lanjut? ";
-		std::cin >> opsi_lanjut;
-		while(opsi_lanjut == 'Y'){
+	switch(opsi){
+		case '1':
+			std::cout << "Input nama file (dengan path lengkap): ";
+			std::cin >> nama_file;
+			top = load_file(nama_file);
+			system("clear");
+			std::cout << "Load success" << "\n";
+			display(top);
+			break;
+		case '2':
 			top = input_nasabah(top);
 			std::cout << "Lanjut? ";
 			std::cin >> opsi_lanjut;
-		}
-		display(top);
+			while(opsi_lanjut == 'Y'){
+				top = input_nasabah(top);
+				std::cout << "Lanjut? ";
+				std::cin >> opsi_lanjut;
+			}
+			system("clear");
+			display(top);
+			break;
+		case '3':
+			std::cout << "Exit" << "\n";
+			break;
 	}
-}
 
+}
 int main(){
 	menu_utama();
 	return 0;
