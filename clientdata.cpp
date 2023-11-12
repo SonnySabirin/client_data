@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-// Version 1.5
+// Version 1.6
 
 typedef struct{
 	std::string nama_lengkap,tanggal_lahir,tempat_lahir,email,no_telepon,jenis_kelamin,alamat;
@@ -17,8 +17,8 @@ typedef struct{
 }Nasabah;
 
 typedef struct Node{
-    Nasabah data;
-    Node* next; 
+	Nasabah data;
+	Node* next;
 }Node;
 
 Node* top = NULL;
@@ -130,62 +130,55 @@ void search(std::string nama){
 	display(found);
 }
 
-
-Node* merge(Node* left, Node* right) {
-    if (!left){
+Node* merge(Node* left,Node* right){
+	if(left == NULL){
 		return right;
 	}
-    if (!right){
+	if(right == NULL){
 		return left;
 	}
 
-    Node* result = NULL;
+	Node* result = NULL;
 
-    if (left->data.infoakun.id_jenis_akun <= right->data.infoakun.id_jenis_akun) {
-        result = left;
-        result->next = merge(left->next, right);
-    } else {
-        result = right;
-        result->next = merge(left, right->next);
-    }
+	if (left->data.infoakun.id_jenis_akun <= right->data.infoakun.id_jenis_akun){
+		result = left;
+		result->next = merge(left->next,right);
+	}
+	else{
+		result = right;
+		result->next = merge(left,right->next);
+	}
 
-    return result;
+	return result;
 }
 
-Node* split(Node* head) {
-    if (!head || !head->next) {
-        return head;
-    }
+Node* split(Node* head){
+	Node* slow = head;
+	Node* fast = head->next;
 
-    Node* slow = head;
-    Node* fast = head->next;
+	while(fast != NULL && fast -> next != NULL){
+		slow = slow->next;
+		fast = fast->next->next;
+	}
 
-    while (fast) {
-        fast = fast->next;
-        if (fast) {
-            slow = slow->next;
-            fast = fast->next;
-        }
-    }
-
-    Node* right = slow->next;
-    slow->next = NULL;
-
-    return right;
+	return slow;
 }
 
-Node* mergesort(Node* head) {
-    if (!head || !head->next) {
-        return head;
-    }
+Node* mergesort(Node* head){
+	if (head == NULL || head -> next == NULL){
+		return head;
+	}
 
-    Node* right = split(head);
+	Node* half = split(head);
+	Node* left = head;
+	Node* right = half -> next;
+	half -> next = NULL;
 
-    head = mergesort(head);
-    right = mergesort(right);
-
-    return merge(head, right);
+	left = mergesort(left);
+	right = mergesort(right);
+	return merge(left,right);
 }
+
 
 void header(){
 	std::cout << "=========================" << "\n";
