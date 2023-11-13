@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-// Version 1.7
+// Version 1.8
 
 typedef struct{
 	std::string nama_lengkap,tanggal_lahir,tempat_lahir,email,no_telepon,jenis_kelamin,alamat;
@@ -55,9 +55,9 @@ Node* input_nasabah(Node* top){
 	PersonalInfo infopersonal;
 	AccountInfo infoakun;
 	std::cin.ignore();
-	std::cout << "Input nama_lengkap: ";
+	std::cout << "Input nama lengkap: ";
 	std::getline(std::cin, infopersonal.nama_lengkap);
-	std::cout << "Tanggal lahir: ";
+	std::cout << "Tanggal lahir (dd-mm-yyyy): ";
 	std::getline(std::cin, infopersonal.tanggal_lahir);
 	std::cout << "Tempat lahir: ";
 	std::getline(std::cin, infopersonal.tempat_lahir);
@@ -73,7 +73,7 @@ Node* input_nasabah(Node* top){
 	std::getline(std::cin, infoakun.no_rekening);
 	std::cout << "Nomor Kartu ATM: ";
 	std::getline(std::cin, infoakun.no_kartu_atm);
-	std::cout << "Jenis Akun: ";
+	std::cout << "Jenis Akun (Tabungan,Giro,Investasi): ";
 	std::getline(std::cin, infoakun.jenis_akun);
 	std::cout << "Nama Ibu Kandung: ";
 	std::getline(std::cin, infoakun.nama_ibu);
@@ -99,6 +99,8 @@ Node* load_file(std::string nama_file){
 	return top;
 }
 
+// in progress
+void output_file(Node* top){}
 
 // test display node
 void display(Node* top){
@@ -189,44 +191,53 @@ void header(){
 	std::cout << "=========================" << "\n";
 }
 
-void menu_load(){
+void menu_load(bool opsi_extra){
 	char opsi;
 	std::string nama;
 	header();
 	std::cout << "1. Display data nasabah" << "\n";
 	std::cout << "2. Search nama nasabah" << "\n";
 	std::cout << "3. Sort berdasarkan jenis tabungan" << "\n";
-	std::cout << "4. Exit" << "\n";
+	if(opsi_extra){
+		std::cout << "4. Output ke file" << "\n";
+	}
+	std::cout << "0. Exit" << "\n";
 	std::cout << "Pilih Opsi: ";
 	std::cin >> opsi;
 	system("clear");
 	switch(opsi){
 		case '1': 
 			display(top);
-			menu_load();
+			menu_load(opsi_extra);
 			break;
 		case '2':
 			std::cout << "Nama nasabah yang ingin disearch: ";
 			std::cin >> nama;
 			search(nama);
-			menu_load();
+			menu_load(opsi_extra);
 			break;
 		case '3':
 			top = mergesort(top);
 			display(top);
-			menu_load();
+			opsi_extra = true;
+			menu_load(opsi_extra);
 			break;
 		case '4':
+			// in progress
+			output_file(top);
+			break;
+		case '0':
 			std::cout << "Exit" << "\n";
 			break;
 		default:
 			std::cout << "Opsi tidak valid!" << "\n";
-			menu_load();
+			menu_load(opsi_extra);
 			break;
 	}
 }
 void menu_utama(){
 	char opsi,opsi_lanjut;
+	bool opsi_extra;
 	std::string nama_file;
 	header();
 	std::cout << "1. Load Data Nasabah" << "\n";
@@ -241,7 +252,7 @@ void menu_utama(){
 			std::cin >> nama_file;
 			top = load_file(nama_file);
 			std::cout << "Load success" << "\n";
-			menu_load();
+			menu_load(opsi_extra);
 			break;
 		case '2':
 			top = input_nasabah(top);
@@ -253,7 +264,8 @@ void menu_utama(){
 				std::cin >> opsi_lanjut;
 			}
 			system("clear");
-			menu_load();
+			opsi_extra = true;
+			menu_load(opsi_extra);
 			break;
 		case '3':
 			std::cout << "Exit" << "\n";
