@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-// Version 1.6
+// Version 1.7
 
 typedef struct{
 	std::string nama_lengkap,tanggal_lahir,tempat_lahir,email,no_telepon,jenis_kelamin,alamat;
@@ -127,6 +127,9 @@ void search(std::string nama){
 		}
 		temp = temp -> next;
 	}
+	if(found == NULL){
+		std::cout << "Nasabah tidak ditemukan" << "\n";
+	}
 	display(found);
 }
 
@@ -196,21 +199,29 @@ void menu_load(){
 	std::cout << "4. Exit" << "\n";
 	std::cout << "Pilih Opsi: ";
 	std::cin >> opsi;
+	system("clear");
 	switch(opsi){
 		case '1': 
 			display(top);
+			menu_load();
 			break;
 		case '2':
 			std::cout << "Nama nasabah yang ingin disearch: ";
 			std::cin >> nama;
 			search(nama);
+			menu_load();
 			break;
 		case '3':
 			top = mergesort(top);
 			display(top);
+			menu_load();
 			break;
 		case '4':
 			std::cout << "Exit" << "\n";
+			break;
+		default:
+			std::cout << "Opsi tidak valid!" << "\n";
+			menu_load();
 			break;
 	}
 }
@@ -220,15 +231,15 @@ void menu_utama(){
 	header();
 	std::cout << "1. Load Data Nasabah" << "\n";
 	std::cout << "2. Input data nasabah baru" << "\n";
-	std::cout << "3. Keluar" << "\n";
+	std::cout << "3. Exit" << "\n";
 	std::cout << "Pilih opsi: ";
 	std::cin >> opsi;
+	system("clear");
 	switch(opsi){
 		case '1':
 			std::cout << "Input nama file (dengan path lengkap): ";
 			std::cin >> nama_file;
 			top = load_file(nama_file);
-			system("clear");
 			std::cout << "Load success" << "\n";
 			menu_load();
 			break;
@@ -242,10 +253,14 @@ void menu_utama(){
 				std::cin >> opsi_lanjut;
 			}
 			system("clear");
-			display(top);
+			menu_load();
 			break;
 		case '3':
 			std::cout << "Exit" << "\n";
+			break;
+		default:
+			std::cout << "Opsi tidak valid!" << "\n";
+			menu_utama();
 			break;
 	}
 }
