@@ -1,8 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-// Version 1.8
+// Version 1.9
 
+std::string clear_cmd;
 typedef struct{
 	std::string nama_lengkap,tanggal_lahir,tempat_lahir,email,no_telepon,jenis_kelamin,alamat;
 }PersonalInfo;
@@ -87,7 +88,7 @@ Node* load_file(std::string nama_file){
 	PersonalInfo infopersonal;
 	AccountInfo infoakun;
 	std::string line;
-	std::ifstream datanasabah (nama_file);
+	std::ifstream datanasabah (nama_file.c_str());
 	while(getline(datanasabah,line)){
 		if(line.empty()){
 			continue;
@@ -204,7 +205,7 @@ void menu_load(bool opsi_extra){
 	std::cout << "0. Exit" << "\n";
 	std::cout << "Pilih Opsi: ";
 	std::cin >> opsi;
-	system("clear");
+	system(clear_cmd.c_str());
 	switch(opsi){
 		case '1': 
 			display(top);
@@ -245,7 +246,7 @@ void menu_utama(){
 	std::cout << "3. Exit" << "\n";
 	std::cout << "Pilih opsi: ";
 	std::cin >> opsi;
-	system("clear");
+	system(clear_cmd.c_str());
 	switch(opsi){
 		case '1':
 			std::cout << "Input nama file (dengan path lengkap): ";
@@ -263,7 +264,7 @@ void menu_utama(){
 				std::cout << "Lanjut? ";
 				std::cin >> opsi_lanjut;
 			}
-			system("clear");
+			system(clear_cmd.c_str());
 			opsi_extra = true;
 			menu_load(opsi_extra);
 			break;
@@ -277,6 +278,11 @@ void menu_utama(){
 	}
 }
 int main(){
+	#if __linux__
+		clear_cmd = "clear";
+	#elif _WIN32
+		clear_cmd = "cls";
+	#endif
 	menu_utama();
 	return 0;
 }
