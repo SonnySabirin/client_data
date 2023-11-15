@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-// Version 2.0
+// Version 2.1
 
 std::string clear_cmd;
 typedef struct{
@@ -90,6 +90,9 @@ Node* load_file(std::string nama_file){
 	std::string line;
 	bool header_file = true;
 	std::ifstream datanasabah (nama_file.c_str());
+	if(datanasabah.is_open()){
+		std::cout << "Load Success!" << "\n";
+	}
 	while(getline(datanasabah,line)){
 		if(header_file){
 			header_file = false;
@@ -110,24 +113,20 @@ Node* load_file(std::string nama_file){
 		getline(data, infoakun.profesi, ',');
 		top = push(top,infopersonal,infoakun);
 	}
+	datanasabah.close();
 	return top;
 }
 
-// in progress
-void output_file(Node* top){
-	std::string nama_output;
-	std::cout << "Nama output file? ";
-	std::cin >> nama_output;
-
+void output_file(Node* top,std::string nama_output){
 	std::ofstream output_to (nama_output.c_str());
 	Node* temp = top;
 	output_to << "Nama Lengkap,Tanggal Lahir,Tempat Lahir,Email,No Telepon,Jenis Kelamin,Alamat,No Rekening,No Kartu ATM,Jenis Akun,Nama Ibu,Profesi" << "\n";
 	while(temp != NULL){
-		output_to << temp -> data.infopersonal.nama_lengkap << "," << temp -> data.infopersonal.tanggal_lahir << "," << temp -> data.infopersonal.tempat_lahir << "," << temp -> data.infopersonal.email << "," << temp -> data.infopersonal.no_telepon << "," << temp -> data.infopersonal.jenis_kelamin << "," << temp -> data.infopersonal.alamat << "," << temp -> data.infoakun.no_rekening << "," << temp -> data.infoakun.no_kartu_atm << "," << temp -> data.infoakun.jenis_akun << "," << temp -> data.infoakun.nama_ibu << "," << temp -> data.infoakun.profesi;
+		output_to << temp -> data.infopersonal.nama_lengkap << "," << temp -> data.infopersonal.tanggal_lahir << "," << temp -> data.infopersonal.tempat_lahir << "," << temp -> data.infopersonal.email << "," << temp -> data.infopersonal.no_telepon << "," << temp -> data.infopersonal.jenis_kelamin << "," << temp -> data.infopersonal.alamat << "," << temp -> data.infoakun.no_rekening << "," << temp -> data.infoakun.no_kartu_atm << "," << temp -> data.infoakun.jenis_akun << "," << temp -> data.infoakun.nama_ibu << "," << temp -> data.infoakun.profesi << "\n";
 
 		temp = temp -> next;
 	}
-
+	output_to.close();
 }
 
 // test display node
@@ -221,7 +220,7 @@ void header(){
 
 void menu_load(bool opsi_extra){
 	char opsi;
-	std::string nama;
+	std::string nama,nama_output;
 	header();
 	std::cout << "1. Display data nasabah" << "\n";
 	std::cout << "2. Search nama nasabah" << "\n";
@@ -251,8 +250,17 @@ void menu_load(bool opsi_extra){
 			menu_load(opsi_extra);
 			break;
 		case '4':
-			// in progress
-			output_file(top);
+			std::cout << "Nama file output (.csv): ";
+			std::cin >> nama_output;
+			if(nama_output.find(".csv") == std::string::npos){
+				std::cout << "Format file tidak sesuai, harus csv.";
+				menu_load(opsi_extra);
+				break;
+			}
+			output_file(top,nama_output);
+			std::cout << "Output success!" << "\n";
+			opsi_extra = false;
+			menu_load(opsi_extra);
 			break;
 		case '0':
 			std::cout << "Exit" << "\n";
@@ -276,10 +284,14 @@ void menu_utama(){
 	system(clear_cmd.c_str());
 	switch(opsi){
 		case '1':
-			std::cout << "Input nama file (dengan path lengkap): ";
+			std::cout << "Input nama file (dengan path lengkap, .csv): ";
 			std::cin >> nama_file;
+			if(nama_file.find(".csv") == std::string::npos){
+				std::cout << "Format file tidak sesuai, harus csv." << "\n";
+				menu_utama();
+				break;
+			}
 			top = load_file(nama_file);
-			std::cout << "Load success" << "\n";
 			menu_load(opsi_extra);
 			break;
 		case '2':
