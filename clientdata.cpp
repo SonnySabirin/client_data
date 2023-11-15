@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-// Version 1.9
+// Version 2.0
 
 std::string clear_cmd;
 typedef struct{
@@ -88,20 +88,47 @@ Node* load_file(std::string nama_file){
 	PersonalInfo infopersonal;
 	AccountInfo infoakun;
 	std::string line;
+	bool header_file = true;
 	std::ifstream datanasabah (nama_file.c_str());
 	while(getline(datanasabah,line)){
-		if(line.empty()){
+		if(header_file){
+			header_file = false;
 			continue;
 		}
 		std::stringstream data(line);
-		data >> infopersonal.nama_lengkap >> infopersonal.tanggal_lahir >> infopersonal.tempat_lahir >> infopersonal.email >> infopersonal.no_telepon >> infopersonal.jenis_kelamin >> infopersonal.alamat >> infoakun.no_rekening >> infoakun.no_kartu_atm >> infoakun.jenis_akun >> infoakun.nama_ibu >> infoakun.profesi;
+		getline(data, infopersonal.nama_lengkap, ',');
+		getline(data, infopersonal.tanggal_lahir, ',');
+		getline(data, infopersonal.tempat_lahir, ',');
+		getline(data, infopersonal.email, ',');
+		getline(data, infopersonal.no_telepon, ',');
+		getline(data, infopersonal.jenis_kelamin, ',');
+		getline(data, infopersonal.alamat, ',');
+		getline(data, infoakun.no_rekening, ',');
+		getline(data, infoakun.no_kartu_atm, ',');
+		getline(data, infoakun.jenis_akun, ',');
+		getline(data, infoakun.nama_ibu, ',');
+		getline(data, infoakun.profesi, ',');
 		top = push(top,infopersonal,infoakun);
 	}
 	return top;
 }
 
 // in progress
-void output_file(Node* top){}
+void output_file(Node* top){
+	std::string nama_output;
+	std::cout << "Nama output file? ";
+	std::cin >> nama_output;
+
+	std::ofstream output_to (nama_output.c_str());
+	Node* temp = top;
+	output_to << "Nama Lengkap,Tanggal Lahir,Tempat Lahir,Email,No Telepon,Jenis Kelamin,Alamat,No Rekening,No Kartu ATM,Jenis Akun,Nama Ibu,Profesi" << "\n";
+	while(temp != NULL){
+		output_to << temp -> data.infopersonal.nama_lengkap << "," << temp -> data.infopersonal.tanggal_lahir << "," << temp -> data.infopersonal.tempat_lahir << "," << temp -> data.infopersonal.email << "," << temp -> data.infopersonal.no_telepon << "," << temp -> data.infopersonal.jenis_kelamin << "," << temp -> data.infopersonal.alamat << "," << temp -> data.infoakun.no_rekening << "," << temp -> data.infoakun.no_kartu_atm << "," << temp -> data.infoakun.jenis_akun << "," << temp -> data.infoakun.nama_ibu << "," << temp -> data.infoakun.profesi;
+
+		temp = temp -> next;
+	}
+
+}
 
 // test display node
 void display(Node* top){
