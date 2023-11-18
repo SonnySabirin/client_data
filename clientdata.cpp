@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-// Version 2.1
+// Version 2.2
 
 std::string clear_cmd;
 typedef struct{
@@ -162,55 +162,35 @@ void search(std::string nama){
 	display(found);
 }
 
-Node* merge(Node* left,Node* right){
-	if(left == NULL){
-		return right;
-	}
-	if(right == NULL){
-		return left;
-	}
-
-	Node* result = NULL;
-
-	if (left->data.infoakun.id_jenis_akun <= right->data.infoakun.id_jenis_akun){
-		result = left;
-		result->next = merge(left->next,right);
-	}
-	else{
-		result = right;
-		result->next = merge(left,right->next);
-	}
-
-	return result;
+Node* bubblesort(Node* top) {
+    if(top == NULL || top->next == NULL){
+        return top;
+    }
+    Node* temp;
+    bool swapped = true;
+    while(swapped){
+        swapped = false;
+        Node* current = top;
+        Node* prev = NULL;
+        while(current && current->next){
+            if(current->data.infoakun.id_jenis_akun > current->next->data.infoakun.id_jenis_akun){
+                if(prev){
+                    prev->next = current->next;
+                }
+				else{
+                    top = current->next;
+                }
+                temp = current->next->next;
+                current->next->next = current;
+                current->next = temp;
+                swapped = true;
+            }
+            prev = current;
+            current = current->next;
+        }
+    }
+    return top;
 }
-
-Node* split(Node* head){
-	Node* slow = head;
-	Node* fast = head->next;
-
-	while(fast != NULL && fast -> next != NULL){
-		slow = slow->next;
-		fast = fast->next->next;
-	}
-
-	return slow;
-}
-
-Node* mergesort(Node* head){
-	if (head == NULL || head -> next == NULL){
-		return head;
-	}
-
-	Node* half = split(head);
-	Node* left = head;
-	Node* right = half -> next;
-	half -> next = NULL;
-
-	left = mergesort(left);
-	right = mergesort(right);
-	return merge(left,right);
-}
-
 
 void header(){
 	std::cout << "=========================" << "\n";
@@ -244,7 +224,7 @@ void menu_load(bool opsi_extra){
 			menu_load(opsi_extra);
 			break;
 		case '3':
-			top = mergesort(top);
+			top = bubblesort(top);
 			display(top);
 			opsi_extra = true;
 			menu_load(opsi_extra);
