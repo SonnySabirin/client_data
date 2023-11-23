@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 // Version 2.2
 
 std::string clear_cmd;
@@ -21,8 +22,6 @@ typedef struct Node{
 	Nasabah data;
 	Node* next;
 }Node;
-
-Node* top = NULL;
 
 Node* push(Node* top,PersonalInfo infopersonal, AccountInfo infoakun){
 	Node* newnode = new Node;
@@ -84,7 +83,7 @@ Node* input_nasabah(Node* top){
 	return top;
 }
 
-Node* load_file(std::string nama_file){
+Node* load_file(Node* top,std::string nama_file){
 	PersonalInfo infopersonal;
 	AccountInfo infoakun;
 	std::string line;
@@ -129,22 +128,40 @@ void output_file(Node* top,std::string nama_output){
 	output_to.close();
 }
 
-// test display node
-void display(Node* top){
-	Node* temp = top;
-	while(temp != NULL){
-		std::cout << temp -> data.infopersonal.nama_lengkap << "\n";
-		std::cout << temp -> data.infopersonal.alamat << "\n";
+void display(Node* top) {
+    Node* temp = top;
+    std::cout << std::setw(20) << std::left << "Nama Lengkap"
+              << std::setw(12) << std::left << "Tgl Lahir"
+              << std::setw(20) << std::left << "Tempat Lahir"
+              << std::setw(25) << std::left << "Email"
+              << std::setw(15) << std::left << "No Telepon"
+              << std::setw(15) << std::left << "Jenis Kelamin"
+              << std::setw(25) << std::left << "Alamat"
+              << std::setw(20) << std::left << "No Rekening"
+              << std::setw(20) << std::left << "No Kartu ATM"
+              << std::setw(15) << std::left << "Jenis Akun"
+              << std::setw(20) << std::left << "Nama Ibu"
+              << std::setw(20) << std::left << "Profesi" << "\n";
 
-		std::cout << temp -> data.infoakun.jenis_akun << "\n";
-		std::cout << temp -> data.infoakun.profesi << "\n";
-
-		temp = temp -> next;
-	}
+    while(temp != NULL) {
+        std::cout << std::setw(20) << std::left << temp->data.infopersonal.nama_lengkap
+                  << std::setw(12) << std::left << temp->data.infopersonal.tanggal_lahir
+                  << std::setw(20) << std::left << temp->data.infopersonal.tempat_lahir
+                  << std::setw(25) << std::left << temp->data.infopersonal.email
+                  << std::setw(15) << std::left << temp->data.infopersonal.no_telepon
+                  << std::setw(15) << std::left << temp->data.infopersonal.jenis_kelamin
+                  << std::setw(25) << std::left << temp->data.infopersonal.alamat
+                  << std::setw(20) << std::left << temp->data.infoakun.no_rekening
+                  << std::setw(20) << std::left << temp->data.infoakun.no_kartu_atm
+                  << std::setw(15) << std::left << temp->data.infoakun.jenis_akun
+                  << std::setw(20) << std::left << temp->data.infoakun.nama_ibu
+                  << std::setw(20) << std::left << temp->data.infoakun.profesi << "\n";
+        temp = temp->next;
+    }
 }
 
 // Linear Search
-void search(std::string nama){
+void search(Node* top,std::string nama){
 	Node* temp = top;
 	Node* found = NULL;
 	while(temp != NULL){
@@ -198,7 +215,8 @@ void header(){
 	std::cout << "=========================" << "\n";
 }
 
-void menu_load(bool opsi_extra){
+void menu_utama();
+void menu_load(Node* top, bool opsi_extra){
 	char opsi;
 	std::string nama,nama_output;
 	header();
@@ -208,50 +226,51 @@ void menu_load(bool opsi_extra){
 	if(opsi_extra){
 		std::cout << "4. Output ke file" << "\n";
 	}
-	std::cout << "0. Exit" << "\n";
+	std::cout << "0. Kembali ke menu utama" << "\n";
 	std::cout << "Pilih Opsi: ";
 	std::cin >> opsi;
 	system(clear_cmd.c_str());
 	switch(opsi){
 		case '1': 
 			display(top);
-			menu_load(opsi_extra);
+			menu_load(top,opsi_extra);
 			break;
 		case '2':
 			std::cout << "Nama nasabah yang ingin disearch: ";
 			std::cin >> nama;
-			search(nama);
-			menu_load(opsi_extra);
+			search(top,nama);
+			menu_load(top,opsi_extra);
 			break;
 		case '3':
 			top = bubblesort(top);
 			display(top);
 			opsi_extra = true;
-			menu_load(opsi_extra);
+			menu_load(top,opsi_extra);
 			break;
 		case '4':
 			std::cout << "Nama file output (.csv): ";
 			std::cin >> nama_output;
 			if(nama_output.find(".csv") == std::string::npos){
 				std::cout << "Format file tidak sesuai, harus csv.";
-				menu_load(opsi_extra);
+				menu_load(top,opsi_extra);
 				break;
 			}
 			output_file(top,nama_output);
 			std::cout << "Output success!" << "\n";
 			opsi_extra = false;
-			menu_load(opsi_extra);
+			menu_load(top,opsi_extra);
 			break;
 		case '0':
-			std::cout << "Exit" << "\n";
+			menu_utama();
 			break;
 		default:
 			std::cout << "Opsi tidak valid!" << "\n";
-			menu_load(opsi_extra);
+			menu_load(top,opsi_extra);
 			break;
 	}
 }
 void menu_utama(){
+	Node* top = NULL;
 	char opsi,opsi_lanjut;
 	bool opsi_extra;
 	std::string nama_file;
@@ -271,8 +290,8 @@ void menu_utama(){
 				menu_utama();
 				break;
 			}
-			top = load_file(nama_file);
-			menu_load(opsi_extra);
+			top = load_file(top,nama_file);
+			menu_load(top,opsi_extra);
 			break;
 		case '2':
 			top = input_nasabah(top);
@@ -285,7 +304,7 @@ void menu_utama(){
 			}
 			system(clear_cmd.c_str());
 			opsi_extra = true;
-			menu_load(opsi_extra);
+			menu_load(top,opsi_extra);
 			break;
 		case '3':
 			std::cout << "Exit" << "\n";
