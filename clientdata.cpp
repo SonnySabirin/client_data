@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-// Version 2.4
+// Version 2.5
 
 std::string clear_cmd;
 typedef struct{
@@ -59,11 +59,15 @@ Node* pop(Node* top){
 	std::cin >> nama;
 	while(temp != NULL){
 		if(temp -> data.infopersonal.nama_lengkap.find(nama) != std::string::npos){
-			std::cout << "Apakah benar ini nama yang ingin didelete? " << temp -> data.infopersonal.nama_lengkap << "\n";
+			std::cout << "Apakah benar ini nama yang ingin didelete? " << temp -> data.infopersonal.nama_lengkap << "(Y/y untuk ya, N/n untuk no) ";
 			std::cin >> choice;
 			if(choice == 'Y' || choice == 'y'){
-			  top = top -> next;
-			  delete temp;
+				top = temp -> next;
+				std::cout << temp -> data.infopersonal.nama_lengkap << " dihapus." << "\n";
+				delete temp;
+			}
+			else if(choice == 'N' || choice == 'n'){
+				std::cout << temp -> data.infopersonal.nama_lengkap << " tidak dihapus." << "\n";
 			}
 		}
 		temp = temp->next;
@@ -92,6 +96,13 @@ Node* input_nasabah(Node* top){
 	std::getline(std::cin, infoakun.no_rekening);
 	std::cout << "Nomor Kartu ATM: ";
 	std::getline(std::cin, infoakun.no_kartu_atm);
+
+	while(infoakun.no_kartu_atm.length() != 16){
+		std::cout << "Nomor kartu ATM melebihi batas 16 atau belum mencapai 16, silahkan input ulang: ";
+		std::getline(std::cin, infoakun.no_kartu_atm);
+	}
+
+	infoakun.no_kartu_atm = infoakun.no_kartu_atm.substr(0,4) + "-" + infoakun.no_kartu_atm.substr(4,4) + "-" + infoakun.no_kartu_atm.substr(8,4) + "-" + infoakun.no_kartu_atm.substr(12,4);
 	std::cout << "Jenis Akun (Tabungan,Giro,Investasi): ";
 	std::getline(std::cin, infoakun.jenis_akun);
 	std::cout << "Nama Ibu Kandung: ";
@@ -177,6 +188,9 @@ void display(Node* top) {
 				namasingkat = namasingkat + " " + namalengkap.substr(i+1, namalengkap.length());
 				break;
 			}
+		}
+		if(namasingkat == ""){
+			namasingkat = namalengkap;
 		}
 		std::cout << std::setw(20) << std::left << namasingkat
                   << std::setw(12) << std::left << temp->data.infopersonal.tanggal_lahir
