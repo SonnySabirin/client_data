@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-// Version 2.2
+// Version 2.4
 
 std::string clear_cmd;
 typedef struct{
@@ -35,13 +35,13 @@ Node* push(Node* top,PersonalInfo infopersonal, AccountInfo infoakun){
 	newnode -> data.infoakun.no_rekening = infoakun.no_rekening;
 	newnode -> data.infoakun.no_kartu_atm = infoakun.no_kartu_atm;
 	newnode -> data.infoakun.jenis_akun = infoakun.jenis_akun;
-	if(infoakun.jenis_akun == "Tabungan"){
+	if(infoakun.jenis_akun == "Tabungan" || infoakun.jenis_akun == "tabungan"){
 		infoakun.id_jenis_akun = 1;
 	}
-	else if(infoakun.jenis_akun == "Giro"){
+	else if(infoakun.jenis_akun == "Giro" || infoakun.jenis_akun == "giro"){
 		infoakun.id_jenis_akun = 2;
 	}
-	else if(infoakun.jenis_akun == "Investasi"){
+	else if(infoakun.jenis_akun == "Investasi" || infoakun.jenis_akun == "investasi"){
 		infoakun.id_jenis_akun = 3;
 	}
 	newnode -> data.infoakun.id_jenis_akun = infoakun.id_jenis_akun;
@@ -51,6 +51,25 @@ Node* push(Node* top,PersonalInfo infopersonal, AccountInfo infoakun){
 	return newnode;
 }
 
+Node* pop(Node* top){
+	Node* temp = top;
+	std::string nama;
+	char choice;
+	std::cout << "Nama yang ingin didelete: ";
+	std::cin >> nama;
+	while(temp != NULL){
+		if(temp -> data.infopersonal.nama_lengkap.find(nama) != std::string::npos){
+			std::cout << "Apakah benar ini nama yang ingin didelete? " << temp -> data.infopersonal.nama_lengkap << "\n";
+			std::cin >> choice;
+			if(choice == 'Y' || choice == 'y'){
+			  top = top -> next;
+			  delete temp;
+			}
+		}
+		temp = temp->next;
+	}
+	return top;
+}
 Node* input_nasabah(Node* top){
 	PersonalInfo infopersonal;
 	AccountInfo infoakun;
@@ -129,8 +148,10 @@ void output_file(Node* top,std::string nama_output){
 }
 
 void display(Node* top) {
-    Node* temp = top;
-    std::cout << std::setw(20) << std::left << "Nama Lengkap"
+	std::string namasingkat;
+	std::string namalengkap;
+	Node* temp = top;
+	std::cout << std::setw(20) << std::left << "Nama Lengkap"
               << std::setw(12) << std::left << "Tgl Lahir"
               << std::setw(20) << std::left << "Tempat Lahir"
               << std::setw(25) << std::left << "Email"
@@ -144,7 +165,20 @@ void display(Node* top) {
               << std::setw(20) << std::left << "Profesi" << "\n";
 
     while(temp != NULL) {
-        std::cout << std::setw(20) << std::left << temp->data.infopersonal.nama_lengkap
+		namalengkap = temp->data.infopersonal.nama_lengkap;
+		for(int i = 0; i < namalengkap.length(); i++){
+			if(namalengkap[i] == ' '){
+				namasingkat = namalengkap.substr(0, i);
+				break;
+			}
+		}
+		for(int i = namalengkap.length(); i > 0; i--){
+			if(namalengkap[i] == ' '){
+				namasingkat = namasingkat + " " + namalengkap.substr(i+1, namalengkap.length());
+				break;
+			}
+		}
+		std::cout << std::setw(20) << std::left << namasingkat
                   << std::setw(12) << std::left << temp->data.infopersonal.tanggal_lahir
                   << std::setw(20) << std::left << temp->data.infopersonal.tempat_lahir
                   << std::setw(25) << std::left << temp->data.infopersonal.email
@@ -156,7 +190,7 @@ void display(Node* top) {
                   << std::setw(15) << std::left << temp->data.infoakun.jenis_akun
                   << std::setw(20) << std::left << temp->data.infoakun.nama_ibu
                   << std::setw(20) << std::left << temp->data.infoakun.profesi << "\n";
-        temp = temp->next;
+		temp = temp->next;
     }
 }
 
@@ -222,9 +256,10 @@ void menu_load(Node* top, bool opsi_extra){
 	header();
 	std::cout << "1. Display data nasabah" << "\n";
 	std::cout << "2. Search nama nasabah" << "\n";
-	std::cout << "3. Sort berdasarkan jenis tabungan" << "\n";
+	std::cout << "3. Sort berdasarkan jenis akun" << "\n";
+	std::cout << "4. Delete nama" << "\n";
 	if(opsi_extra){
-		std::cout << "4. Output ke file" << "\n";
+		std::cout << "5. Output ke file" << "\n";
 	}
 	std::cout << "0. Kembali ke menu utama" << "\n";
 	std::cout << "Pilih Opsi: ";
@@ -248,6 +283,10 @@ void menu_load(Node* top, bool opsi_extra){
 			menu_load(top,opsi_extra);
 			break;
 		case '4':
+			top = pop(top);
+			menu_load(top,opsi_extra);
+			break;
+		case '5':
 			std::cout << "Nama file output (.csv): ";
 			std::cin >> nama_output;
 			if(nama_output.find(".csv") == std::string::npos){
