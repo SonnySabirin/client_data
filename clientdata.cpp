@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-// Version 2.5
+// Version 2.6
 
 std::string clear_cmd;
 typedef struct{
@@ -205,6 +205,7 @@ void display(Node* top) {
                   << std::setw(20) << std::left << temp->data.infoakun.nama_ibu
                   << std::setw(20) << std::left << temp->data.infoakun.profesi << "\n";
 		temp = temp->next;
+		namasingkat = "";
     }
 }
 
