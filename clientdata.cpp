@@ -2,11 +2,11 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-// Version 2.6
+// Version 2.7
 
 std::string clear_cmd;
 typedef struct{
-	std::string nama_lengkap,tanggal_lahir,tempat_lahir,email,no_telepon,jenis_kelamin,alamat;
+	std::string nama_lengkap,tanggal_lahir,tempat_lahir,email,no_handphone,jenis_kelamin,alamat;
 }PersonalInfo;
 
 typedef struct{
@@ -29,7 +29,7 @@ Node* push(Node* top,PersonalInfo infopersonal, AccountInfo infoakun){
 	newnode -> data.infopersonal.tanggal_lahir = infopersonal.tanggal_lahir;
 	newnode -> data.infopersonal.tempat_lahir = infopersonal.tempat_lahir;
 	newnode -> data.infopersonal.email = infopersonal.email;
-	newnode -> data.infopersonal.no_telepon = infopersonal.no_telepon;
+	newnode -> data.infopersonal.no_handphone = infopersonal.no_handphone;
 	newnode -> data.infopersonal.jenis_kelamin = infopersonal.jenis_kelamin;
 	newnode -> data.infopersonal.alamat = infopersonal.alamat;
 	newnode -> data.infoakun.no_rekening = infoakun.no_rekening;
@@ -59,7 +59,7 @@ Node* pop(Node* top){
 	std::cin >> nama;
 	while(temp != NULL){
 		if(temp -> data.infopersonal.nama_lengkap.find(nama) != std::string::npos){
-			std::cout << "Apakah benar ini nama yang ingin didelete? " << temp -> data.infopersonal.nama_lengkap << "(Y/y untuk ya, N/n untuk no) ";
+			std::cout << "Apakah benar ini nama yang ingin didelete? " << temp -> data.infopersonal.nama_lengkap << "(Y/N)? ";
 			std::cin >> choice;
 			if(choice == 'Y' || choice == 'y'){
 				top = temp -> next;
@@ -78,36 +78,66 @@ Node* input_nasabah(Node* top){
 	PersonalInfo infopersonal;
 	AccountInfo infoakun;
 	std::cin.ignore();
-	std::cout << "Input nama lengkap: ";
+	std::cout << "Input nama lengkap (contoh: Anton)  : ";
 	std::getline(std::cin, infopersonal.nama_lengkap);
-	std::cout << "Tanggal lahir (dd-mm-yyyy): ";
+	std::cout << "Tanggal lahir (dd-mm-yyyy)          : ";
 	std::getline(std::cin, infopersonal.tanggal_lahir);
-	std::cout << "Tempat lahir: ";
+	std::cout << "Tempat lahir (contoh: Jakarta)      : ";
 	std::getline(std::cin, infopersonal.tempat_lahir);
-	std::cout << "Email: ";
+	std::cout << "Email (contoh: anton@gmail.com)     : ";
 	std::getline(std::cin, infopersonal.email);
-	std::cout << "No telepon: ";
-	std::getline(std::cin, infopersonal.no_telepon);
-	std::cout << "Jenis kelamin: ";
-	std::getline(std::cin, infopersonal.jenis_kelamin);
-	std::cout << "Alamat: ";
+	std::cout << "Nomor handphone (contoh: 08xxxxxxx) : ";
+	std::getline(std::cin, infopersonal.no_handphone);
+	
+	while(infopersonal.no_handphone.length() < 10){
+		std::cout << "Nomor handphone tidak valid, silahkan input ulang." << "\n";
+		std::cout << "Nomor handphone (contoh: 08xxxxxxx) : ";
+		std::getline(std::cin, infopersonal.no_handphone);
+	}
+	
+	infopersonal.no_handphone = infopersonal.no_handphone.substr(0,4) + "-" + infopersonal.no_handphone.substr(4,4) + "-" 
+	+ infopersonal.no_handphone.substr(8,4);
+	
+	while (true){
+        std::cout << "Jenis kelamin (Pria/Perempuan)      : ";
+        std::getline(std::cin, infopersonal.jenis_kelamin);
+
+        if (infopersonal.jenis_kelamin == "Pria" || infopersonal.jenis_kelamin == "Perempuan"){
+            break;
+        }
+		else{
+            std::cout << "Jenis kelamin tidak valid, silahkan input ulang." << "\n";
+        }
+    }
+    
+	std::cout << "Alamat (contoh: Jl. Mawar No.8)     : ";
 	std::getline(std::cin, infopersonal.alamat);
-	std::cout << "Nomor Rekening: ";
+	std::cout << "Nomor Rekening (contoh: 40xxxxxxxx) : ";
 	std::getline(std::cin, infoakun.no_rekening);
-	std::cout << "Nomor Kartu ATM: ";
+	
+	while(infoakun.no_rekening.length() < 10){
+		std::cout << "Nomor rekening tidak valid, silahkan input ulang." << "\n";
+		std::cout << "Nomor Rekening                      : ";
+		std::getline(std::cin, infoakun.no_rekening);
+	}
+	
+	std::cout << "Nomor Kartu ATM                     : ";
 	std::getline(std::cin, infoakun.no_kartu_atm);
 
 	while(infoakun.no_kartu_atm.length() != 16){
-		std::cout << "Nomor kartu ATM melebihi batas 16 atau belum mencapai 16, silahkan input ulang: ";
+		std::cout << "Nomor kartu ATM tidak valid, silahkan input ulang." << "\n";
+		std::cout << "Nomor Kartu ATM                     : ";
 		std::getline(std::cin, infoakun.no_kartu_atm);
 	}
 
-	infoakun.no_kartu_atm = infoakun.no_kartu_atm.substr(0,4) + "-" + infoakun.no_kartu_atm.substr(4,4) + "-" + infoakun.no_kartu_atm.substr(8,4) + "-" + infoakun.no_kartu_atm.substr(12,4);
-	std::cout << "Jenis Akun (Tabungan,Giro,Investasi): ";
+	infoakun.no_kartu_atm = infoakun.no_kartu_atm.substr(0,4) + "-" + infoakun.no_kartu_atm.substr(4,4) + "-" 
+	+ infoakun.no_kartu_atm.substr(8,4) + "-" + infoakun.no_kartu_atm.substr(12,4);
+	
+	std::cout << "Jenis Akun (Tabungan/Giro/Investasi): ";
 	std::getline(std::cin, infoakun.jenis_akun);
-	std::cout << "Nama Ibu Kandung: ";
+	std::cout << "Nama Ibu Kandung                    : ";
 	std::getline(std::cin, infoakun.nama_ibu);
-	std::cout << "Profesi: ";
+	std::cout << "Profesi                             : ";
 	std::getline(std::cin, infoakun.profesi);
 	top = push(top,infopersonal,infoakun);
 	return top;
@@ -132,7 +162,7 @@ Node* load_file(Node* top,std::string nama_file){
 		getline(data, infopersonal.tanggal_lahir, ',');
 		getline(data, infopersonal.tempat_lahir, ',');
 		getline(data, infopersonal.email, ',');
-		getline(data, infopersonal.no_telepon, ',');
+		getline(data, infopersonal.no_handphone, ',');
 		getline(data, infopersonal.jenis_kelamin, ',');
 		getline(data, infopersonal.alamat, ',');
 		getline(data, infoakun.no_rekening, ',');
@@ -149,31 +179,38 @@ Node* load_file(Node* top,std::string nama_file){
 void output_file(Node* top,std::string nama_output){
 	std::ofstream output_to (nama_output.c_str());
 	Node* temp = top;
-	output_to << "Nama Lengkap,Tanggal Lahir,Tempat Lahir,Email,No Telepon,Jenis Kelamin,Alamat,No Rekening,No Kartu ATM,Jenis Akun,Nama Ibu,Profesi" << "\n";
+	output_to << "Nama Lengkap,Tanggal Lahir,Tempat Lahir,Email,No handphone,Jenis Kelamin,Alamat,No Rekening,No Kartu ATM,Jenis Akun,Nama Ibu,Profesi" << "\n";
 	while(temp != NULL){
-		output_to << temp -> data.infopersonal.nama_lengkap << "," << temp -> data.infopersonal.tanggal_lahir << "," << temp -> data.infopersonal.tempat_lahir << "," << temp -> data.infopersonal.email << "," << temp -> data.infopersonal.no_telepon << "," << temp -> data.infopersonal.jenis_kelamin << "," << temp -> data.infopersonal.alamat << "," << temp -> data.infoakun.no_rekening << "," << temp -> data.infoakun.no_kartu_atm << "," << temp -> data.infoakun.jenis_akun << "," << temp -> data.infoakun.nama_ibu << "," << temp -> data.infoakun.profesi << "\n";
+		output_to << temp -> data.infopersonal.nama_lengkap << "," << temp -> data.infopersonal.tanggal_lahir << "," << temp -> data.infopersonal.tempat_lahir 
+		<< "," << temp -> data.infopersonal.email << "," << temp -> data.infopersonal.no_handphone << "," << temp -> data.infopersonal.jenis_kelamin << "," 
+		<< temp -> data.infopersonal.alamat << "," << temp -> data.infoakun.no_rekening << "," << temp -> data.infoakun.no_kartu_atm << "," 
+		<< temp -> data.infoakun.jenis_akun << "," << temp -> data.infoakun.nama_ibu << "," << temp -> data.infoakun.profesi << "\n";
 
 		temp = temp -> next;
 	}
 	output_to.close();
 }
 
-void display(Node* top) {
+void display(Node* top){
 	std::string namasingkat;
 	std::string namalengkap;
+	int no = 1;
 	Node* temp = top;
-	std::cout << std::setw(20) << std::left << "Nama Lengkap"
-              << std::setw(12) << std::left << "Tgl Lahir"
-              << std::setw(20) << std::left << "Tempat Lahir"
-              << std::setw(25) << std::left << "Email"
-              << std::setw(15) << std::left << "No Telepon"
-              << std::setw(15) << std::left << "Jenis Kelamin"
-              << std::setw(25) << std::left << "Alamat"
-              << std::setw(20) << std::left << "No Rekening"
-              << std::setw(20) << std::left << "No Kartu ATM"
-              << std::setw(15) << std::left << "Jenis Akun"
-              << std::setw(20) << std::left << "Nama Ibu"
-              << std::setw(20) << std::left << "Profesi" << "\n";
+	std::cout << "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << "\n"
+			  << "| " << std::setw(4) << std::left << "No. " << "| "
+			  << std::setw(20) << std::left << "Nama Lengkap" << "| "
+              << std::setw(15) << std::left << "Tanggal Lahir" << "| "
+              << std::setw(15) << std::left << "Tempat Lahir" << "| "
+              << std::setw(25) << std::left << "Email" << "| "
+              << std::setw(15) << std::left << "No handphone" << "| "
+              << std::setw(15) << std::left << "Jenis Kelamin" << "| "
+              << std::setw(25) << std::left << "Alamat" << "| "
+              << std::setw(15) << std::left << "No Rekening" << "| "
+              << std::setw(20) << std::left << "No Kartu ATM" << "| "
+              << std::setw(15) << std::left << "Jenis Akun" << "| "
+              << std::setw(20) << std::left << "Nama Ibu" << "| "
+              << std::setw(20) << std::left << "Profesi" << "| " << "\n"
+			  << "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << "\n";
 
     while(temp != NULL) {
 		namalengkap = temp->data.infopersonal.nama_lengkap;
@@ -192,21 +229,23 @@ void display(Node* top) {
 		if(namasingkat == ""){
 			namasingkat = namalengkap;
 		}
-		std::cout << std::setw(20) << std::left << namasingkat
-                  << std::setw(12) << std::left << temp->data.infopersonal.tanggal_lahir
-                  << std::setw(20) << std::left << temp->data.infopersonal.tempat_lahir
-                  << std::setw(25) << std::left << temp->data.infopersonal.email
-                  << std::setw(15) << std::left << temp->data.infopersonal.no_telepon
-                  << std::setw(15) << std::left << temp->data.infopersonal.jenis_kelamin
-                  << std::setw(25) << std::left << temp->data.infopersonal.alamat
-                  << std::setw(20) << std::left << temp->data.infoakun.no_rekening
-                  << std::setw(20) << std::left << temp->data.infoakun.no_kartu_atm
-                  << std::setw(15) << std::left << temp->data.infoakun.jenis_akun
-                  << std::setw(20) << std::left << temp->data.infoakun.nama_ibu
-                  << std::setw(20) << std::left << temp->data.infoakun.profesi << "\n";
+		std::cout << "| " <<  std::setw(2) << std::right << no++ <<  std::setw(2) << std::left << "." << "| "
+				  << std::setw(20) << std::left << namasingkat << "| "
+                  << std::setw(15) << std::left << temp->data.infopersonal.tanggal_lahir << "| " 
+                  << std::setw(15) << std::left << temp->data.infopersonal.tempat_lahir << "| " 
+                  << std::setw(25) << std::left << temp->data.infopersonal.email << "| " 
+                  << std::setw(15) << std::left << temp->data.infopersonal.no_handphone << "| " 
+                  << std::setw(15) << std::left << temp->data.infopersonal.jenis_kelamin << "| " 
+                  << std::setw(25) << std::left << temp->data.infopersonal.alamat << "| " 
+                  << std::setw(15) << std::left << temp->data.infoakun.no_rekening << "| " 
+                  << std::setw(20) << std::left << temp->data.infoakun.no_kartu_atm << "| " 
+                  << std::setw(15) << std::left << temp->data.infoakun.jenis_akun << "| " 
+                  << std::setw(20) << std::left << temp->data.infoakun.nama_ibu << "| " 
+                  << std::setw(20) << std::left << temp->data.infoakun.profesi << "| " << "\n";
 		temp = temp->next;
 		namasingkat = "";
     }
+    std::cout << "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << "\n";
 }
 
 // Linear Search
@@ -349,11 +388,11 @@ void menu_utama(){
 			break;
 		case '2':
 			top = input_nasabah(top);
-			std::cout << "Lanjut? ";
+			std::cout << "Lanjut (Y/N)? ";
 			std::cin >> opsi_lanjut;
 			while(opsi_lanjut == 'Y'){
 				top = input_nasabah(top);
-				std::cout << "Lanjut? ";
+				std::cout << "Lanjut (Y/N)? ";
 				std::cin >> opsi_lanjut;
 			}
 			system(clear_cmd.c_str());
