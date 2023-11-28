@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <bits/stdc++.h> 
-// Version 2.9
+// Version 2.9.1
 
 std::string clear_cmd;
 typedef struct{
@@ -226,6 +226,9 @@ void output_file(Node* top, std::string nama_output){
 			<< temp->data.infoakun.jenis_akun << ","
 			<< temp->data.infoakun.nama_ibu << "\n";
 
+		if(temp -> next == NULL){
+			break;
+		}
 		temp = temp->next;
 	}
 
@@ -290,7 +293,7 @@ void display(Node* top){
 }
 
 // Linear Search
-void search(Node* top,std::string nama){
+Node* search(Node* top,std::string nama){
 	Node* temp = top;
 	Node* found = NULL;
 	std::string search_string;
@@ -310,6 +313,7 @@ void search(Node* top,std::string nama){
 		std::cout << "Nasabah tidak ditemukan" << "\n";
 	}
 	display(found);
+	return found;
 }
 
 Node* bubblesort(Node* top){
@@ -350,7 +354,9 @@ void header(){
 
 void menu_utama();
 
-void menu_load(Node* top, bool opsi_extra){
+void menu_load(Node* top, Node* found,bool opsi_extra){
+	//Node* found = NULL;
+	Node* output = NULL;
 	char opsi;
 	std::string nama,nama_output;
 	header();
@@ -368,43 +374,52 @@ void menu_load(Node* top, bool opsi_extra){
 	switch(opsi){
 		case '1': 
 			display(top);
-			menu_load(top,opsi_extra);
+			menu_load(top,NULL,opsi_extra);
 			break;
 		case '2':
 			std::cout << "Nama nasabah yang ingin disearch: ";
 			std::cin >> nama;
-			search(top,nama);
-			menu_load(top,opsi_extra);
+			found = search(top,nama);
+			if(found != NULL){
+				opsi_extra = true;
+			}
+			menu_load(top,found,opsi_extra);
 			break;
 		case '3':
 			top = bubblesort(top);
 			display(top);
 			opsi_extra = true;
-			menu_load(top,opsi_extra);
+			menu_load(top,NULL,opsi_extra);
 			break;
 		case '4':
 			top = pop(top);
-			menu_load(top,opsi_extra);
+			menu_load(top,NULL,opsi_extra);
 			break;
 		case '5':
 			std::cout << "Nama file output (.csv): ";
 			std::cin >> nama_output;
 			if (nama_output.find(".csv") == std::string::npos){
 				std::cout << "Format file tidak sesuai, harus csv.";
-				menu_load(top, opsi_extra);
+				menu_load(top,NULL,opsi_extra);
 				break;
 			}
-			output_file(top,nama_output);
+			if(found != NULL){
+				output = found;
+			}
+			else{
+				output = top;
+			}
+			output_file(output,nama_output);
 			std::cout << "Output success!" << "\n";
 			opsi_extra = false;
-			menu_load(top, opsi_extra);
+			menu_load(top,NULL,opsi_extra);
 			break;
 		case '0':
 			menu_utama();
 			break;
 		default:
 			std::cout << "Opsi tidak valid!" << "\n";
-			menu_load(top,opsi_extra);
+			menu_load(top,NULL,opsi_extra);
 			break;
 	}
 }
@@ -431,7 +446,7 @@ void menu_utama(){
 				break;
 			}
 			top = load_file(top,nama_file);
-			menu_load(top,opsi_extra);
+			menu_load(top,NULL,opsi_extra);
 			break;
 		case '2':
 			top = input_nasabah(top);
@@ -444,7 +459,7 @@ void menu_utama(){
 			}
 			system(clear_cmd.c_str());
 			opsi_extra = true;
-			menu_load(top,opsi_extra);
+			menu_load(top,NULL,opsi_extra);
 			break;
 		case '3':
 			std::cout << "Exit" << "\n";
