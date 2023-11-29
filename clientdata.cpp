@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <bits/stdc++.h> 
-// Version 2.9.1
+// Version 3.0
 
 std::string clear_cmd;
 typedef struct{
@@ -53,41 +53,63 @@ Node* push(Node* top, PersonalInfo infopersonal, AccountInfo infoakun){
 }
 
 Node* pop(Node* top, Node* delete_node){
-	top = delete_node -> next;
+	top = delete_node->next;
 	delete delete_node;
 	return top;
 }
 
-Node* delete_data(Node* top){
-	Node* temp = top;
+Node* delete_data(Node* top) {
+	Node* current = top;
+	Node* prev = NULL;
+
 	std::string nama;
 	std::string search_string;
 	char choice;
-	bool found;
+	bool found = false;
+
 	std::cout << "Nama yang ingin didelete: ";
 	std::cin >> nama;
 	transform(nama.begin(), nama.end(), nama.begin(), ::tolower);
-	while (temp != NULL){
-		search_string = temp->data.infopersonal.nama_lengkap;
+
+	while (current != NULL) {
+		search_string = current->data.infopersonal.nama_lengkap;
 		transform(search_string.begin(), search_string.end(), search_string.begin(), ::tolower);
-		if (search_string.find(nama) != std::string::npos){
+
+		if (search_string.find(nama) != std::string::npos) {
 			found = true;
-			std::cout << "Nama yang ingin didelete adalah " << temp -> data.infopersonal.nama_lengkap << " (Y/N)? ";
+			std::cout << "Nama yang ingin didelete adalah " << current->data.infopersonal.nama_lengkap << " (Y/N)? ";
 			std::cin >> choice;
-			if (choice == 'Y' || choice == 'y'){
-				top = pop(top,temp);
-			}
-			else if (choice == 'N' || choice == 'n'){
-				std::cout << temp -> data.infopersonal.nama_lengkap << " tidak dihapus." << "\n";
+
+			if (choice == 'Y' || choice == 'y') {
+				if (prev == NULL) {
+					top = pop(top,current);
+					current = top;
+				} 
+				else {
+					prev->next = current->next;
+					delete current;
+					current = prev->next;
+				}
+			} 
+			else if (choice == 'N' || choice == 'n') {
+				prev = current;
+				current = current->next;
+				std::cout << current->data.infopersonal.nama_lengkap << " tidak dihapus." << "\n";
 			}
 		}
-		temp = temp->next;
+		else{
+			prev = current;
+			current = current->next;
+		}
 	}
-	if(!found){
+
+	if (!found) {
 		std::cout << "Nasabah tidak ditemukan" << "\n";
 	}
+
 	return top;
 }
+
 Node* input_nasabah(Node* top){
 	PersonalInfo infopersonal;
 	AccountInfo infoakun;
@@ -265,10 +287,10 @@ void display(Node* top){
 	while (temp != NULL){
 		namalengkap = temp->data.infopersonal.nama_lengkap;
 		no_handphone = temp->data.infopersonal.no_handphone.substr(0,4) + "-" + temp->data.infopersonal.no_handphone.substr(4,4) + "-" 
-		+ temp->data.infopersonal.no_handphone.substr(8,4);
+			+ temp->data.infopersonal.no_handphone.substr(8,4);
 		no_kartu_atm = temp->data.infoakun.no_kartu_atm.substr(0,4) + "-" + temp->data.infoakun.no_kartu_atm.substr(4,4) + "-" 
-		+ temp->data.infoakun.no_kartu_atm.substr(8,4) + "-" + temp->data.infoakun.no_kartu_atm.substr(12,4);
- 
+			+ temp->data.infoakun.no_kartu_atm.substr(8,4) + "-" + temp->data.infoakun.no_kartu_atm.substr(12,4);
+
 		for (int i = 0; i < namalengkap.length(); i++){
 			if (namalengkap[i] == ' '){
 				namasingkat = namalengkap.substr(0, i);
