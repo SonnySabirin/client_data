@@ -52,11 +52,18 @@ Node* push(Node* top, PersonalInfo infopersonal, AccountInfo infoakun){
 	return newnode;
 }
 
-Node* pop(Node* top){
+Node* pop(Node* top, Node* delete_node){
+	top = delete_node -> next;
+	delete delete_node;
+	return top;
+}
+
+Node* delete_data(Node* top){
 	Node* temp = top;
 	std::string nama;
 	std::string search_string;
 	char choice;
+	bool found;
 	std::cout << "Nama yang ingin didelete: ";
 	std::cin >> nama;
 	transform(nama.begin(), nama.end(), nama.begin(), ::tolower);
@@ -64,12 +71,11 @@ Node* pop(Node* top){
 		search_string = temp->data.infopersonal.nama_lengkap;
 		transform(search_string.begin(), search_string.end(), search_string.begin(), ::tolower);
 		if (search_string.find(nama) != std::string::npos){
+			found = true;
 			std::cout << "Nama yang ingin didelete adalah " << temp -> data.infopersonal.nama_lengkap << " (Y/N)? ";
 			std::cin >> choice;
 			if (choice == 'Y' || choice == 'y'){
-				top = temp -> next;
-				std::cout << temp -> data.infopersonal.nama_lengkap << " dihapus." << "\n";
-				delete temp;
+				top = pop(top,temp);
 			}
 			else if (choice == 'N' || choice == 'n'){
 				std::cout << temp -> data.infopersonal.nama_lengkap << " tidak dihapus." << "\n";
@@ -77,9 +83,11 @@ Node* pop(Node* top){
 		}
 		temp = temp->next;
 	}
+	if(!found){
+		std::cout << "Nasabah tidak ditemukan" << "\n";
+	}
 	return top;
 }
-
 Node* input_nasabah(Node* top){
 	PersonalInfo infopersonal;
 	AccountInfo infoakun;
@@ -122,8 +130,6 @@ Node* input_nasabah(Node* top){
 		std::cout << "Nomor handphone (contoh: 08xxxxxxx) : ";
 		std::getline(std::cin, infopersonal.no_handphone);
 	}
-	infopersonal.no_handphone = infopersonal.no_handphone.substr(0,4) + "-" + infopersonal.no_handphone.substr(4,4) + "-" 
-		+ infopersonal.no_handphone.substr(8,4);
 
 	std::cout << "Nomor Rekening (contoh: 1234567890) : ";
 	std::getline(std::cin, infoakun.no_rekening);
@@ -142,8 +148,6 @@ Node* input_nasabah(Node* top){
 		std::cout << "Nomor Kartu ATM                     : ";
 		std::getline(std::cin, infoakun.no_kartu_atm);
 	}
-	infoakun.no_kartu_atm = infoakun.no_kartu_atm.substr(0,4) + "-" + infoakun.no_kartu_atm.substr(4,4) + "-" 
-		+ infoakun.no_kartu_atm.substr(8,4) + "-" + infoakun.no_kartu_atm.substr(12,4);
 
 	while (true){
 		std::cout << "Jenis Akun (Tabungan/Giro/Investasi): ";
@@ -238,6 +242,8 @@ void output_file(Node* top, std::string nama_output){
 void display(Node* top){
 	std::string namasingkat;
 	std::string namalengkap;
+	std::string no_handphone;
+	std::string no_kartu_atm;
 	int no = 1;
 	Node* temp = top;
 	std::cout << "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << "\n"
@@ -258,6 +264,11 @@ void display(Node* top){
 
 	while (temp != NULL){
 		namalengkap = temp->data.infopersonal.nama_lengkap;
+		no_handphone = temp->data.infopersonal.no_handphone.substr(0,4) + "-" + temp->data.infopersonal.no_handphone.substr(4,4) + "-" 
+		+ temp->data.infopersonal.no_handphone.substr(8,4);
+		no_kartu_atm = temp->data.infoakun.no_kartu_atm.substr(0,4) + "-" + temp->data.infoakun.no_kartu_atm.substr(4,4) + "-" 
+		+ temp->data.infoakun.no_kartu_atm.substr(8,4) + "-" + temp->data.infoakun.no_kartu_atm.substr(12,4);
+ 
 		for (int i = 0; i < namalengkap.length(); i++){
 			if (namalengkap[i] == ' '){
 				namasingkat = namalengkap.substr(0, i);
@@ -281,9 +292,9 @@ void display(Node* top){
 			<< std::setw(20) << std::left << temp->data.infoakun.profesi << "| "
 			<< std::setw(25) << std::left << temp->data.infopersonal.alamat << "| "
 			<< std::setw(25) << std::left << temp->data.infopersonal.email << "| "
-			<< std::setw(15) << std::left << temp->data.infopersonal.no_handphone << "| "
+			<< std::setw(15) << std::left << no_handphone << "| "
 			<< std::setw(15) << std::left << temp->data.infoakun.no_rekening << "| "
-			<< std::setw(20) << std::left << temp->data.infoakun.no_kartu_atm << "| "
+			<< std::setw(20) << std::left << no_kartu_atm << "| "
 			<< std::setw(15) << std::left << temp->data.infoakun.jenis_akun << "| "
 			<< std::setw(20) << std::left << temp->data.infoakun.nama_ibu << "| " << "\n";
 		temp = temp->next;
@@ -392,7 +403,7 @@ void menu_load(Node* top, Node* found,bool opsi_extra){
 			menu_load(top,NULL,opsi_extra);
 			break;
 		case '4':
-			top = pop(top);
+			top = delete_data(top);
 			menu_load(top,NULL,opsi_extra);
 			break;
 		case '5':
