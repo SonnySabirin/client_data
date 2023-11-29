@@ -388,7 +388,6 @@ void header(){
 void menu_utama();
 
 void menu_load(Node* top, Node* found,bool opsi_extra){
-	//Node* found = NULL;
 	Node* output = NULL;
 	char opsi;
 	std::string nama,nama_output;
