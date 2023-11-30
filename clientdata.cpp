@@ -94,7 +94,7 @@ Node* delete_data(Node* top) {
 			else if (choice == 'N' || choice == 'n') {
 				prev = current;
 				current = current->next;
-				std::cout << current->data.infopersonal.nama_lengkap << " tidak dihapus." << "\n";
+				std::cout << prev->data.infopersonal.nama_lengkap << " tidak dihapus." << "\n";
 			}
 		}
 		else{
