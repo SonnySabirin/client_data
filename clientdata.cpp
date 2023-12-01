@@ -2,8 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <bits/stdc++.h> 
-// Version 3.0
+#include <algorithm>
+// Version 3.1
 
 std::string clear_cmd;
 typedef struct{
@@ -94,7 +94,7 @@ Node* delete_data(Node* top) {
 			else if (choice == 'N' || choice == 'n') {
 				prev = current;
 				current = current->next;
-				std::cout << current->data.infopersonal.nama_lengkap << " tidak dihapus." << "\n";
+				std::cout << prev->data.infopersonal.nama_lengkap << " tidak dihapus." << "\n";
 			}
 		}
 		else{
@@ -113,6 +113,10 @@ Node* delete_data(Node* top) {
 Node* input_nasabah(Node* top){
 	PersonalInfo infopersonal;
 	AccountInfo infoakun;
+	int date;
+	int month;
+	int year;
+	bool leap_year;
 	std::cin.ignore();
 	std::cout << "Input nama lengkap (contoh: Anton)  : ";
 	std::getline(std::cin, infopersonal.nama_lengkap);
@@ -121,6 +125,33 @@ Node* input_nasabah(Node* top){
 	std::cout << "Tanggal lahir (dd-mm-yyyy)          : ";
 	std::getline(std::cin, infopersonal.tanggal_lahir);
 
+	while(true){
+		date = stoi(infopersonal.tanggal_lahir.substr(0,2));
+		month = stoi(infopersonal.tanggal_lahir.substr(3,2));
+		year = stoi(infopersonal.tanggal_lahir.substr(6,4));
+
+		if(date && month && year && month < 12 && month > 0){
+			if(year % 4 == 0 && year % 100 != 0 || year % 400 == 0){
+				leap_year = true;
+			}
+			if (month != 2 && date < 31 && date > 0){
+				break;
+			}
+			else if((leap_year && date < 29 || !leap_year && date < 28) && date > 0){
+				break;
+			}
+			else{
+				std::cout << "Tanggal tidak sesuai,silahkan input ulang." << "\n";
+				std::cout << "Tanggal lahir (dd-mm-yyyy)          : ";
+				std::getline(std::cin, infopersonal.tanggal_lahir);
+			}
+		}
+		else{
+			std::cout << "Format tanggal lahir tidak sesuai,silahkan input ulang." << "\n";
+			std::cout << "Tanggal lahir (dd-mm-yyyy)          : ";
+			std::getline(std::cin, infopersonal.tanggal_lahir);
+		}
+	}	
 	while (true){
 		std::cout << "Jenis kelamin (Pria/Perempuan)      : ";
 		std::getline(std::cin, infopersonal.jenis_kelamin);
