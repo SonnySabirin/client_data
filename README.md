@@ -113,8 +113,7 @@ Anton Wijaya,Jakarta,01-01-1990,Pria,Karyawan,Jl. Melati No.10,anton@gmail.com,0
 
 ---
 
-## ✨ Pengembang
-**Sonny Sabirin**  
+## ✨ Tetang Project
 Project: `client_data`  
 Versi: 3.0  
 Tujuan: Latihan manajemen data nasabah berbasis struktur data dinamis dan file handling di C++.
